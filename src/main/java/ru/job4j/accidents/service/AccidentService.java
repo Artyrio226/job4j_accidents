@@ -6,13 +6,25 @@ import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.repository.AccidentMem;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @AllArgsConstructor
 public class AccidentService {
+    private static final AtomicInteger COUNT = new AtomicInteger(4);
     private final AccidentMem accidentMem;
 
     public Collection<Accident> findAll() {
         return accidentMem.findAll();
+    }
+
+    public Optional<Accident> create(Accident accident) {
+        Accident newAccident = new Accident();
+        newAccident.setId(COUNT.getAndIncrement());
+        newAccident.setName(accident.getName());
+        newAccident.setText(accident.getText());
+        newAccident.setAddress(accident.getAddress());
+        return accidentMem.create(newAccident);
     }
 }

@@ -28,9 +28,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="/">Главная</a>
-                    <a class="nav-link" href="#">Features</a>
-                    <a class="nav-link" href="#">Pricing</a>
+                    <a class="nav-item nav-link active" href="#">Главная</a>
+                    <a class="nav-item nav-link active" th:href="@{/}">Инциденты</a>
+                    <a class="nav-item nav-link" th:href="@{/createAccident}">Добавить Инцидент</a>
                     <a class="nav-link" href="#" th:text="${user}"></a>
                 </div>
             </div>
