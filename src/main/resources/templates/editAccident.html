@@ -36,6 +36,9 @@
                     <input type="hidden" name="address" th:field="*{address}"/>
                     <input type="hidden" name="type.id" th:field="*{type.id}"/>
                     <input type="hidden" name="type.name" th:field="*{type.name}"/>
+                    <input type="hidden" name="rIds" th:each="rule: *{rules}"
+                                                             th:text="${rule.name}"
+                                                             th:value="${rule.id}"/>
                     <div class="form-group">
                         <label for="text">Описание</label>
                         <input type="text" class="form-control" name="text" id="text" th:field="*{text}">
