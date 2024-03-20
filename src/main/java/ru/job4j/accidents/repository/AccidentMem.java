@@ -26,4 +26,8 @@ public class AccidentMem {
     public Optional<Accident> create(Accident accident) {
         return Optional.ofNullable(accidents.put(accident.getId(), accident));
     }
+
+    public Optional<Accident> findById(int id) {
+        return Optional.ofNullable(accidents.get(id));
+    }
 }

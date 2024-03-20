@@ -45,6 +45,7 @@
                         <th scope="col">Имя</th>
                         <th scope="col">Описание</th>
                         <th scope="col">Адрес</th>
+                        <th scope="col">Действия</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,9 @@
                         <td th:text="${accident.name}"></td>
                         <td th:text="${accident.text}"></td>
                         <td th:text="${accident.address}"></td>
+                        <td>
+                            <a th:text="Редактировать" th:href="@{|/editAccident?id=${accident.id}|}"></a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

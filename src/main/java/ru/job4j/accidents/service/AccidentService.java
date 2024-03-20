@@ -6,6 +6,7 @@ import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.repository.AccidentMem;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,10 +22,15 @@ public class AccidentService {
 
     public Optional<Accident> create(Accident accident) {
         Accident newAccident = new Accident();
-        newAccident.setId(COUNT.getAndIncrement());
+        int id = accident.getId();
+        newAccident.setId(id == 0 ? COUNT.getAndIncrement() : id);
         newAccident.setName(accident.getName());
         newAccident.setText(accident.getText());
         newAccident.setAddress(accident.getAddress());
         return accidentMem.create(newAccident);
+    }
+
+    public Optional<Accident> findById(int id) {
+        return accidentMem.findById(id);
     }
 }
