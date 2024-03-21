@@ -8,22 +8,19 @@ import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.repository.AccidentMem;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @AllArgsConstructor
 public class AccidentService {
-    private static final AtomicInteger COUNT = new AtomicInteger(4);
     private final AccidentMem accidentMem;
+    private final RuleService ruleService;
 
     public Collection<Accident> findAll() {
         return accidentMem.findAll();
     }
 
-    public Optional<Accident> create(Accident accident, Set<Rule> set) {
+    public Optional<Accident> create(Accident accident, String[] ids) {
         Accident newAccident = new Accident();
-        int id = accident.getId();
-        newAccident.setId(id == 0 ? COUNT.getAndIncrement() : id);
         newAccident.setName(accident.getName());
         newAccident.setText(accident.getText());
         newAccident.setAddress(accident.getAddress());
@@ -33,11 +30,26 @@ public class AccidentService {
         accidentType.setName(accident.getType().getName());
         newAccident.setType(accidentType);
 
+        Set<Rule> set = getSet(ids);
         newAccident.setRules(set);
         return accidentMem.create(newAccident);
     }
 
     public Optional<Accident> findById(int id) {
         return accidentMem.findById(id);
+    }
+
+    public Optional<Accident> update(Accident accident, String[] ids) {
+        Set<Rule> set = getSet(ids);
+        accident.setRules(set);
+        return accidentMem.update(accident);
+    }
+
+    private Set<Rule> getSet(String[] ids) {
+        Set<Rule> set = new HashSet<>();
+        for (String str: ids) {
+            set.add(ruleService.findById(Integer.parseInt(str)).get());
+        }
+        return set;
     }
 }

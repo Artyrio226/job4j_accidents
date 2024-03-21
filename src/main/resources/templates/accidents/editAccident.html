@@ -20,7 +20,7 @@
             <div class="navbar-nav">
                 <a class="nav-item nav-link" href="#">Главная</a>
                 <a class="nav-item nav-link" th:href="@{/}">Инциденты</a>
-                <a class="nav-item nav-link" th:href="@{/createAccident}">Добавить Инцидент</a>
+                <a class="nav-item nav-link" th:href="@{/accidents/createAccident}">Добавить Инцидент</a>
             </div>
         </div>
     </nav>
@@ -30,7 +30,7 @@
                 Редактирование инцидента
             </div>
             <div class="card-body">
-                <form th:action="@{/saveAccident}" method="POST" th:object="${accident}">
+                <form th:action="@{/accidents/updateAccident}" method="POST" th:object="${accident}">
                     <input type="hidden" name="id" th:field="*{id}"/>
                     <input type="hidden" name="name" th:field="*{name}"/>
                     <input type="hidden" name="address" th:field="*{address}"/>

@@ -30,7 +30,7 @@
                 <div class="navbar-nav">
                     <a class="nav-item nav-link active" href="#">Главная</a>
                     <a class="nav-item nav-link active" th:href="@{/}">Инциденты</a>
-                    <a class="nav-item nav-link" th:href="@{/createAccident}">Добавить Инцидент</a>
+                    <a class="nav-item nav-link" th:href="@{/accidents/createAccident}">Добавить Инцидент</a>
                     <a class="nav-link" href="#" th:text="${user}"></a>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                         <td th:text="${accident.text}"></td>
                         <td th:text="${accident.address}"></td>
                         <td>
-                            <a th:text="Редактировать" th:href="@{|/editAccident?id=${accident.id}|}"></a>
+                            <a th:text="Редактировать" th:href="@{|/accidents/editAccident?id=${accident.id}|}"></a>
                         </td>
                     </tr>
                     </tbody>

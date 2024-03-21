@@ -8,10 +8,12 @@ import ru.job4j.accidents.model.Rule;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 @RequiredArgsConstructor
 public class AccidentMem {
+    private static final AtomicInteger COUNT = new AtomicInteger(4);
     private final Map<Integer, Accident> accidents = new ConcurrentHashMap<>(Map.of(
             1, new Accident(1,
                     "Антон Сидоров",
@@ -38,10 +40,16 @@ public class AccidentMem {
     }
 
     public Optional<Accident> create(Accident accident) {
+        int id = accident.getId();
+        accident.setId(id == 0 ? COUNT.getAndIncrement() : id);
         return Optional.ofNullable(accidents.put(accident.getId(), accident));
     }
 
     public Optional<Accident> findById(int id) {
         return Optional.ofNullable(accidents.get(id));
+    }
+
+    public Optional<Accident> update(Accident accident) {
+        return Optional.ofNullable(accidents.computeIfPresent(accident.getId(), (a, b) -> accident));
     }
 }
