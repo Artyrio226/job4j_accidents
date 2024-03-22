@@ -7,11 +7,12 @@ import ru.job4j.accidents.model.AccidentType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 @RequiredArgsConstructor
-public class TypeMem {
+public class AccidentTypeMem {
     private final Map<Integer, AccidentType> accidentTypeMap = new ConcurrentHashMap<>(Map.of(
             1, new AccidentType(1, "Две машины"),
             2, new AccidentType(2, "Машина и человек"),
@@ -20,5 +21,9 @@ public class TypeMem {
 
     public Collection<AccidentType> findAll() {
         return new ArrayList<>(accidentTypeMap.values());
+    }
+
+    public Optional<AccidentType> findById(int id) {
+        return Optional.ofNullable(accidentTypeMap.get(id));
     }
 }

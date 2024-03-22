@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.service.AccidentService;
 import ru.job4j.accidents.service.RuleService;
-import ru.job4j.accidents.service.TypeService;
+import ru.job4j.accidents.service.AccidentTypeService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/accidents")
 public class AccidentController {
     private final AccidentService accidents;
-    private final TypeService typeService;
+    private final AccidentTypeService typeService;
     private final RuleService ruleService;
 
     @GetMapping("/createAccident")

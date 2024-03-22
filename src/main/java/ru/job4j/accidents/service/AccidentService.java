@@ -3,9 +3,10 @@ package ru.job4j.accidents.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
-import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.repository.AccidentMem;
+import ru.job4j.accidents.repository.RuleMem;
+import ru.job4j.accidents.repository.AccidentTypeMem;
 
 import java.util.*;
 
@@ -13,7 +14,8 @@ import java.util.*;
 @AllArgsConstructor
 public class AccidentService {
     private final AccidentMem accidentMem;
-    private final RuleService ruleService;
+    private final RuleMem ruleMem;
+    private final AccidentTypeMem typeMem;
 
     public Collection<Accident> findAll() {
         return accidentMem.findAll();
@@ -25,10 +27,8 @@ public class AccidentService {
         newAccident.setText(accident.getText());
         newAccident.setAddress(accident.getAddress());
 
-        AccidentType accidentType = new AccidentType();
-        accidentType.setId(accident.getType().getId());
-        accidentType.setName(accident.getType().getName());
-        newAccident.setType(accidentType);
+        var typeOptional = typeMem.findById(accident.getType().getId());
+        newAccident.setType(typeOptional.get());
 
         Set<Rule> set = getSet(ids);
         newAccident.setRules(set);
@@ -48,7 +48,7 @@ public class AccidentService {
     private Set<Rule> getSet(String[] ids) {
         Set<Rule> set = new HashSet<>();
         for (String str: ids) {
-            set.add(ruleService.findById(Integer.parseInt(str)).get());
+            set.add(ruleMem.findById(Integer.parseInt(str)).get());
         }
         return set;
     }
