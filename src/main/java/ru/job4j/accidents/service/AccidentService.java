@@ -4,51 +4,55 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.repository.AccidentMem;
-import ru.job4j.accidents.repository.RuleMem;
-import ru.job4j.accidents.repository.AccidentTypeMem;
+import ru.job4j.accidents.repository.jdbc.AccidentJdbcTemplate;
+import ru.job4j.accidents.repository.jdbc.AccidentTypeJdbcTemplate;
+import ru.job4j.accidents.repository.jdbc.RuleJdbcTemplate;
 
 import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class AccidentService {
-    private final AccidentMem accidentMem;
-    private final RuleMem ruleMem;
-    private final AccidentTypeMem typeMem;
+    private final AccidentJdbcTemplate accidentsRepostiory;
+    private final RuleJdbcTemplate ruleRepostiory;
+    private final AccidentTypeJdbcTemplate accidentTypeRepostiory;
 
     public Collection<Accident> findAll() {
-        return accidentMem.findAll();
+        return accidentsRepostiory.findAll();
     }
 
     public Optional<Accident> create(Accident accident, String[] ids) {
-        Accident newAccident = new Accident();
+        var newAccident = new Accident();
         newAccident.setName(accident.getName());
         newAccident.setText(accident.getText());
         newAccident.setAddress(accident.getAddress());
 
-        var typeOptional = typeMem.findById(accident.getType().getId());
-        newAccident.setType(typeOptional.get());
+        var optionalAccidentType = accidentTypeRepostiory.findById(accident.getType().getId());
+        newAccident.setType(optionalAccidentType.get());
 
         Set<Rule> set = getSet(ids);
         newAccident.setRules(set);
-        return accidentMem.create(newAccident);
+        var optionalAccident = accidentsRepostiory.create(newAccident);
+        ruleRepostiory.create(optionalAccident.get().getId(), optionalAccident.get().getRules());
+        return optionalAccident;
     }
 
     public Optional<Accident> findById(int id) {
-        return accidentMem.findById(id);
+        return accidentsRepostiory.findById(id);
     }
 
     public Optional<Accident> update(Accident accident, String[] ids) {
         Set<Rule> set = getSet(ids);
         accident.setRules(set);
-        return accidentMem.update(accident);
+        var optionalAccident = accidentsRepostiory.update(accident);
+        ruleRepostiory.update(accident.getId(), optionalAccident.get().getRules());
+        return optionalAccident;
     }
 
     private Set<Rule> getSet(String[] ids) {
         Set<Rule> set = new HashSet<>();
         for (String str: ids) {
-            set.add(ruleMem.findById(Integer.parseInt(str)).get());
+            set.add(ruleRepostiory.findById(Integer.parseInt(str)).get());
         }
         return set;
     }

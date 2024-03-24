@@ -41,6 +41,8 @@ public class AccidentController {
             return "errors/404";
         }
         model.addAttribute("accident", accidentOptional.get());
+        model.addAttribute("types", typeService.findAll());
+        model.addAttribute("rules", ruleService.findAll());
         return "/accidents/editAccident";
     }
 
