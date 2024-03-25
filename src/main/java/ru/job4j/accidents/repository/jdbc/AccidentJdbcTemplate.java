@@ -8,11 +8,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
+import ru.job4j.accidents.model.Rule;
 
 import java.sql.PreparedStatement;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @AllArgsConstructor
@@ -35,9 +34,12 @@ public class AccidentJdbcTemplate {
     }
 
     public List<Accident> findAll() {
-        return jdbc.query("select a.id, a.name, a.text, a.address, a.types_id, t.name "
-                          + "from accidents a join types t on a.types_id = t.id",
-                getRowMapper());
+        Map<Integer, Accident> map = new HashMap<>();
+        return jdbc.query("select a.id, a.name, a.text, a.address, a.types_id, t.name, r.id, r.name "
+                          + "from accidents a join types t on a.types_id = t.id "
+                          + "join accidents_rules ar on a.id = accidents_id "
+                          + "join rules r on ar.rules_id = r.id",
+                getRowMapper(map));
     }
 
     public Optional<Accident> update(Accident accident) {
@@ -51,25 +53,36 @@ public class AccidentJdbcTemplate {
     }
 
     public Optional<Accident> findById(int id) {
-        var result = jdbc.query("select a.id, a.name, a.text, a.address, a.types_id, t.name "
-                                + "from accidents a join types t on t.id = a.types_id where a.id = ?",
-                getRowMapper(),
+        Map<Integer, Accident> map = new HashMap<>();
+        var result = jdbc.query("select a.id, a.name, a.text, a.address, a.types_id, t.name, r.id, r.name "
+                                + "from accidents a join types t on a.types_id = t.id "
+                                + "join accidents_rules ar on a.id = accidents_id "
+                                + "join rules r on ar.rules_id = r.id where a.id = ?",
+                getRowMapper(map),
                 id);
         return Optional.of(result.get(0));
     }
 
-    private static RowMapper<Accident> getRowMapper() {
+    private static RowMapper<Accident> getRowMapper(Map<Integer, Accident> map) {
         return (rs, row) -> {
-            Accident accident = new Accident();
-            accident.setId(rs.getInt(1));
-            accident.setName(rs.getString(2));
-            accident.setText(rs.getString(3));
-            accident.setAddress(rs.getString(4));
+            int id = rs.getInt(1);
+            Accident accident = map.get(id);
+            if (accident == null) {
+                accident = new Accident();
+                accident.setId(id);
+                accident.setName(rs.getString(2));
+                accident.setText(rs.getString(3));
+                accident.setAddress(rs.getString(4));
 
-            AccidentType accidentType = new AccidentType();
-            accidentType.setId(rs.getInt(5));
-            accidentType.setName(rs.getString(6));
-            accident.setType(accidentType);
+                AccidentType accidentType = new AccidentType(rs.getInt(5), rs.getString(6));
+                accident.setType(accidentType);
+                accident.setRules(new HashSet<>());
+                map.put(id, accident);
+            }
+            Rule rule = new Rule();
+            rule.setId(rs.getInt(7));
+            rule.setName(rs.getString(8));
+            accident.getRules().add(rule);
             return accident;
         };
     }
