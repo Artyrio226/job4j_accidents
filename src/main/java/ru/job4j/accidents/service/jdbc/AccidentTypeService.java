@@ -1,4 +1,4 @@
-package ru.job4j.accidents.service;
+package ru.job4j.accidents.service.jdbc;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
