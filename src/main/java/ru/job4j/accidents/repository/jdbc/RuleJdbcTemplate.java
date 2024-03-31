@@ -15,11 +15,8 @@ public class RuleJdbcTemplate {
     private final JdbcTemplate jdbc;
 
     public Set<Rule> create(int id, Set<Rule> rules) {
-        for (Rule rule: rules) {
-            jdbc.update("insert into accidents_rules (accidents_id, rules_id) values (?, ?)",
-                    id,
-                    rule.getId());
-        }
+        List<Object[]> args = rules.stream().map(rule -> new Object[]{id, rule.getId()}).toList();
+        jdbc.batchUpdate("insert into accidents_rules (accidents_id, rules_id) values (?, ?)", args);
         return rules;
     }
 
@@ -46,11 +43,7 @@ public class RuleJdbcTemplate {
 
     public Set<Rule> update(int id, Set<Rule> rules) {
         jdbc.update("delete from accidents_rules where accidents_id = ?", id);
-        for (Rule rule: rules) {
-            jdbc.update("insert into accidents_rules (accidents_id, rules_id) values (?, ?)",
-                    id,
-                    rule.getId());
-        }
+        create(id, rules);
         return rules;
     }
 }

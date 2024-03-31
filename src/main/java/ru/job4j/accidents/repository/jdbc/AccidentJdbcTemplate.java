@@ -30,7 +30,13 @@ public class AccidentJdbcTemplate {
             return stmt;
         }, keyHolder);
         accident.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        setRules(accident.getId(), accident.getRules());
         return Optional.of(accident);
+    }
+
+    private void setRules(int id, Set<Rule> rules) {
+        List<Object[]> args = rules.stream().map(rule -> new Object[]{id, rule.getId()}).toList();
+        jdbc.batchUpdate("insert into accidents_rules (accidents_id, rules_id) values (?, ?)", args);
     }
 
     public List<Accident> findAll() {
@@ -43,24 +49,26 @@ public class AccidentJdbcTemplate {
     }
 
     public Optional<Accident> update(Accident accident) {
+        int id = accident.getId();
         jdbc.update("update accidents set name = ?, text = ?, address = ?, types_id = ? where id = ?",
                 accident.getName(),
                 accident.getText(),
                 accident.getAddress(),
                 accident.getType().getId(),
-                accident.getId());
+                id);
+        jdbc.update("delete from accidents_rules where accidents_id = ?", id);
+        setRules(id, accident.getRules());
         return Optional.of(accident);
     }
 
     public Optional<Accident> findById(int id) {
         Map<Integer, Accident> map = new HashMap<>();
-        var result = jdbc.query("select a.id, a.name, a.text, a.address, a.types_id, t.name, r.id, r.name "
+        return jdbc.query("select a.id, a.name, a.text, a.address, a.types_id, t.name, r.id, r.name "
                                 + "from accidents a join types t on a.types_id = t.id "
                                 + "join accidents_rules ar on a.id = accidents_id "
                                 + "join rules r on ar.rules_id = r.id where a.id = ?",
                 getRowMapper(map),
-                id);
-        return Optional.of(result.get(0));
+                id).stream().findFirst();
     }
 
     private static RowMapper<Accident> getRowMapper(Map<Integer, Accident> map) {
