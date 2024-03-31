@@ -14,13 +14,6 @@ import java.util.Optional;
 public class AccidentTypeHibernate {
     private final SessionFactory sf;
 
-//    public Optional<Accident> create(Accident accident) {
-//        try (Session session = sf.openSession()) {
-//            session.persist(accident);
-//            return Optional.of(accident);
-//        }
-//    }
-
     public List<AccidentType> findAll() {
         try (Session session = sf.openSession()) {
             return session
@@ -29,12 +22,6 @@ public class AccidentTypeHibernate {
         }
     }
 
-//    public Optional<Accident> update(Accident accident) {
-//        try (Session session = sf.openSession()) {
-//            session.merge(accident);
-//            return Optional.of(accident);
-//        }
-//    }
 
     public Optional<AccidentType> findById(int id) {
         try (Session session = sf.openSession()) {

@@ -14,13 +14,6 @@ import java.util.Optional;
 public class RuleHibernate {
     private final SessionFactory sf;
 
-//    public Optional<Accident> create(Accident accident) {
-//        try (Session session = sf.openSession()) {
-//            session.persist(accident);
-//            return Optional.of(accident);
-//        }
-//    }
-
     public List<Rule> findAll() {
         try (Session session = sf.openSession()) {
             return session
@@ -28,13 +21,6 @@ public class RuleHibernate {
                     .list();
         }
     }
-
-//    public Optional<Accident> update(Accident accident) {
-//        try (Session session = sf.openSession()) {
-//            session.merge(accident);
-//            return Optional.of(accident);
-//        }
-//    }
 
     public Optional<Rule> findById(int id) {
         try (Session session = sf.openSession()) {

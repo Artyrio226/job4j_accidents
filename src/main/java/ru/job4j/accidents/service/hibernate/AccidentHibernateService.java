@@ -29,16 +29,7 @@ public class AccidentHibernateService {
 
         var optionalAccidentType = accidentTypeHibernate.findById(accident.getType().getId());
         newAccident.setType(optionalAccidentType.get());
-
-//        Set<Rule> set = new HashSet<>();
-//        for (String id: ids) {
-//            Rule rule = new Rule();
-//            rule.setId(Integer.parseInt(id));
-//            newAccident.addRule(rule);
-//        }
         newAccident.setRules(getSet(ids));
-//        var optionalAccident = accidentsRepostiory.create(newAccident);
-//        ruleRepostiory.create(optionalAccident.get().getId(), optionalAccident.get().getRules());
         return accidentHibernate.create(newAccident);
     }
 
@@ -47,10 +38,7 @@ public class AccidentHibernateService {
     }
 
     public Optional<Accident> update(Accident accident, String[] ids) {
-//        Set<Rule> set = getSet(ids);
         accident.setRules(getSet(ids));
-//        var optionalAccident = accidentsRepostiory.update(accident);
-//        ruleRepostiory.update(accident.getId(), optionalAccident.get().getRules());
         return accidentHibernate.update(accident);
     }
 
